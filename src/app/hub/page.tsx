@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { AppShell } from "@/components/layout/AppShell"
 import { TravelCard } from "@/components/travel/TravelCard"
 import { supabase } from "@/lib/supabaseClient"
+import { useCart, CartItem } from "@/lib/CartContext"
 
 interface TravelItem {
   id: number
@@ -16,18 +17,34 @@ interface TravelItem {
 export default function TravelHubPage() {
   const [items, setItems] = useState<TravelItem[]>([])
   const [searchQuery, setSearchQuery] = useState("")
-  const [sortBy, setSortBy] = useState("name-az") 
+  const [sortBy, setSortBy] = useState("name-az")
+
+  const { cart, addToCart, removeFromCart } = useCart()
 
   useEffect(() => {
     const fetchItems = async () => {
       const { data, error } = await supabase.from("travel_items").select("*")
-      if (error) console.error("Error fetching travel items:", error)
-      else setItems(data)
+      if (error) console.error(error)
+      else setItems(data || [])
     }
     fetchItems()
   }, [])
 
-  // Apply search filter and then sort
+  const toggleCart = (item: TravelItem) => {
+    const inCart = cart.some((ci) => ci.id === item.id)
+    if (inCart) removeFromCart(item.id)
+    else
+      addToCart({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        price: item.price,
+        location: "Unknown",
+        selectedDate: new Date().toDateString(),
+        dateOptions: ["Jul 07", "Jul 08", "Jul 09", "Jul 10"],
+      })
+  }
+
   const filteredItems = items
     .filter((item) =>
       item.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -49,8 +66,8 @@ export default function TravelHubPage() {
 
   return (
     <AppShell
-      dexCount={2}               // You can make this dynamic if needed
-      hubCount={items.length}
+      dexCount={2}
+      hubCount={cart.length}
       showSearch={true}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
@@ -71,6 +88,8 @@ export default function TravelHubPage() {
             description={item.description}
             price={item.price}
             imageUrl={item.image_url}
+            inCart={cart.some((ci) => ci.id === item.id)}
+            toggleCart={() => toggleCart(item)}
           />
         ))}
       </div>

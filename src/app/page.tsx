@@ -5,13 +5,15 @@ import { AppShell } from "@/components/layout/AppShell"
 import { TrekGrid } from "@/components/trek/TrekGrid"
 import { Pagination } from "@/components/ui/Pagination"
 import { supabase } from "@/lib/supabaseClient"
-import { Trek } from "@/components/trek/TrekCard"
+import { Trek } from "@/components/trek/TrekCard" // ✅ import the type
+
+
 
 export default function TravelBookingApp() {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("name-az")
   const [savedTreks, setSavedTreks] = useState<number[]>([])
-  const [treks, setTreks] = useState<Trek[]>([])
+  const [treks, setTreks] = useState<Trek[]>([]) // ✅ use the Trek type
   const [loading, setLoading] = useState(true)
 
   const toggleSaved = (id: number) => {
@@ -35,7 +37,6 @@ export default function TravelBookingApp() {
     fetchTreks()
   }, [])
 
-  // Filter and sort treks based on search query and sort option
   const filteredTreks = treks
     .filter((t) =>
       t.title.toLowerCase().includes(searchQuery.toLowerCase())
