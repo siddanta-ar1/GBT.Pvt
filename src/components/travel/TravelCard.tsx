@@ -9,6 +9,8 @@ interface TravelCardProps {
   description: string
   price: number
   imageUrl: string
+  inCart: boolean
+  toggleCart: () => void
 }
 
 export function TravelCard({ id, title, description, price, imageUrl }: TravelCardProps) {

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { AppShell } from "@/components/layout/AppShell"
 import { TravelCard } from "@/components/travel/TravelCard"
 import { supabase } from "@/lib/supabaseClient"
-import { useCart, CartItem } from "@/lib/CartContext"
+import { useCart } from "@/lib/CartContext"
 
 interface TravelItem {
   id: number
